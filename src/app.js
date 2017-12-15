@@ -1,13 +1,8 @@
 const express = require('express')
 const { Client } = require('tplink-smarthome-api');
 const multer = require('multer');
-
-const approvedClients = {
-    'idifl20vxca': true,
-    'dt98qp3q68mvw2rhy9yijrbp': true,
-};
-
-var upload = multer({ dest: '../temp/' });
+const config = require('./config.json');
+const upload = multer({ dest: '../temp/' });
 
 var app = express();
 app.post('/', upload.single('thumb'), (req, res, next)=>{
@@ -20,11 +15,11 @@ app.post('/', upload.single('thumb'), (req, res, next)=>{
 app.listen(12035);
 
 async function run(payload) {
-    if (!approvedClients[payload.Player.uuid]) {
+    if (!config.ApprovedClients[payload.Player.uuid]) {
 	return;
     }
     const client = new Client();
-    const device = await client.getDevice({host: '192.168.1.85'});
+    const device = await client.getDevice({host: config.Host});
 
     switch (payload.event) {
         case 'media.play':
