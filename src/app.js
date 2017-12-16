@@ -15,12 +15,6 @@ app.post('/', upload.single('thumb'), (req, res, next)=>{
     console.log("Account Title:\t" + payload.Account.title);
     console.log("Player Title:\t" + payload.Player.title);
     console.log("Media Title:\t" + payload.Metadata.title);
-    
-//    fs.appendFile("request.log", JSON.stringify(payload), function(err) {
-//	if (err) {
-//	    return console.log(err);
-//	}
-//    });
 
     run(payload).catch((err)=>{console.log(err)});
 });
