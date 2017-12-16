@@ -10,15 +10,19 @@ app.post('/', upload.single('thumb'), (req, res, next)=>{
     res.sendStatus(200);
 
     var payload = JSON.parse(req.body.payload);
+
+    logEvent(payload);
+    run(payload).catch((err)=>{console.log(err)});
+});
+app.listen(12035);
+
+function logEvent(payload) {
     console.log("Timestamp:\t" + new Date());
     console.log("Event Type:\t" + payload.event);
     console.log("Account Title:\t" + payload.Account.title);
     console.log("Player Title:\t" + payload.Player.title);
-    console.log("Media Title:\t" + payload.Metadata.title);
-
-    run(payload).catch((err)=>{console.log(err)});
-});
-app.listen(12035);
+    console.log("Media Title:\t" + payload.Metadata.title);    
+}
 
 async function run(payload) {
     if (!config.AprovedClients[payload.Player.uuid]) {
