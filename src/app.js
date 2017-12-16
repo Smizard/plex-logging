@@ -21,7 +21,7 @@ function logEvent(payload) {
     console.log("Event Type:\t" + payload.event);
     console.log("Account Title:\t" + payload.Account.title);
     console.log("Player Title:\t" + payload.Player.title);
-    console.log("Media Title:\t" + payload.Metadata.title);    
+    console.log("Media Title:\t" + payload.Metadata.title);
 }
 
 async function run(payload) {
