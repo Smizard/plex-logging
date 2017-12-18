@@ -44,12 +44,43 @@ function logEvent(payload) {
 }
 
 function handleDB(payload) {
-    var metadata = payload.Metadata;
+    insertUser(payload.Account);
+    insertPlayer(payload.Player);
+    
+    var metadata = payload.Metadata;    
     switch (metadata.type) {
     case 'movie':
 	insertMovie(metadata);
 	break;
     }
+}
+
+function insertUser(account) {
+    var sql = "INSERT INTO Users " +
+	"(ID, Title) " +
+	"VALUES(" + account.id +
+	", '" + account.title + "')" +
+	"ON DUPLICATE KEY UPDATE LastUpdate=CURRENT_TIMESTAMP";
+    con.query(sql, (err, result) => {
+	if (err) {
+	    throw err;
+	}
+	console.log("INSERT RESULT: " + JSON.stringify(result));
+    });
+}
+
+function insertPlayer(player) {
+    var sql = "INSERT INTO Players " +
+	"(ID, Title) " +
+	"VALUES('" + player.id +
+	"', '" + player.title + "') " +
+	"ON DUPLICATE KEY UPDATE Title='" + player.title + "'";
+    con.query(sql, (err, result) => {
+	if (err) {
+	    throw err;
+	}
+	console.log("INSERT RESULT: " + JSON.stringify(result));
+    });
 }
 
 function insertMovie(metadata) {
@@ -61,13 +92,14 @@ function insertMovie(metadata) {
 	", " + metadata.year +
 	", " + metadata.rating +
 	", '" + metadata.contentRating + "') " +
-	"ON DUPLICATE KEY UPDATE Rating=" +
-	metadata.rating + ", LastUpdate=CURRENT_TIMESTAMP";
+	"ON DUPLICATE KEY UPDATE " +
+	"Rating=" + metadata.rating + ", " +
+	"LastUpdate=CURRENT_TIMESTAMP";
     con.query(sql, (err, result) => {
 	if (err) {
 	    throw err;
 	}
-	console.log("INSERT RESULT" + JSON.stringify(result));
+	console.log("INSERT RESULT: " + JSON.stringify(result));
     });
 }
 
