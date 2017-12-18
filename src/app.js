@@ -72,7 +72,7 @@ function insertUser(account) {
 function insertPlayer(player) {
     var sql = "INSERT INTO Players " +
 	"(ID, Title) " +
-	"VALUES('" + player.id +
+	"VALUES('" + player.uuid +
 	"', '" + player.title + "') " +
 	"ON DUPLICATE KEY UPDATE Title='" + player.title + "'";
     con.query(sql, (err, result) => {
