@@ -2,16 +2,31 @@ const express = require('express')
 const { Client } = require('tplink-smarthome-api');
 const multer = require('multer');
 const config = require('./config.json');
+const db_config = require('./db_config.json');
 const upload = multer({ dest: '../temp/' });
 const fs = require('fs');
 const mysql = require('mysql');
 
-const con = mysql.createConnection({
-    host: "localhost",
-    user: "plexLogger",
-    password: "loggerpassword",
-    database: "plexlogtest"
-});
+var con;
+
+function handleDisconnect() {
+    con = mysql.createConnection(db_config);
+    con.connect(function(err) {
+	if(err) {
+	    console.log("DB CONNECTION ERROR: " +  err);
+	    setTimeout(handleDisconnect, 2000);
+	}
+	console.log("DB Connected");
+    });
+    con.on('error', (err) => {
+	console.log("DB ERROR: " + err);
+	if(err.code === 'PROTOCOL_CONNECTION_LOST') {
+	    handleDisconnect();
+	} else {
+	    throw err;
+	}
+    });
+}
 
 var app = express();
 app.post('/', upload.single('thumb'), (req, res, next)=>{
@@ -24,13 +39,14 @@ app.post('/', upload.single('thumb'), (req, res, next)=>{
 });
 app.listen(12035);
 console.log("Listening");
+handleDisconnect();
 
-con.connect((err) => {
-    if (err) {
-	throw err;
-    }
-    console.log("DB Connected");
-});
+//con.connect((err) => {
+//    if (err) {
+//	throw err;
+//    }
+//    console.log("DB Connected");
+//});
 
 function logEvent(payload) {
     handleDB(payload);

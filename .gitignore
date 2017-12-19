@@ -19,6 +19,7 @@ coverage
 
 # Config
 config.json
+db_config.json
 
 # nyc test coverage
 .nyc_output
