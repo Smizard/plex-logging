@@ -9,6 +9,19 @@ const mysql = require('mysql');
 
 var con;
 
+var app = express();
+app.post('/', upload.single('thumb'), (req, res, next)=>{
+    res.sendStatus(200);
+
+    var payload = JSON.parse(req.body.payload);
+
+    logEvent(payload);
+    changeLights(payload).catch((err)=>{console.log(err)});
+});
+app.listen(12035);
+console.log("Listening");
+handleDisconnect();
+
 function handleDisconnect() {
     con = mysql.createConnection(db_config);
     con.connect(function(err) {
@@ -28,35 +41,46 @@ function handleDisconnect() {
     });
 }
 
-var app = express();
-app.post('/', upload.single('thumb'), (req, res, next)=>{
-    res.sendStatus(200);
-
-    var payload = JSON.parse(req.body.payload);
-
-    logEvent(payload);
-    changeLights(payload).catch((err)=>{console.log(err)});
-});
-app.listen(12035);
-console.log("Listening");
-handleDisconnect();
-
-//con.connect((err) => {
-//    if (err) {
-//	throw err;
-//    }
-//    console.log("DB Connected");
-//});
+var map = {};
 
 function logEvent(payload) {
+    var event = payload.event;
+    var key = payload.Account.id + payload.Player.uuid;
+    var arrayData = map[key] || [];
+    switch(event) {
+    case 'media.play':
+	arrayData.push(new Date());
+	arrayData.push(0);
+	break;
+    case 'media.resume':
+	arrayData[0] = new Date();
+	break;
+    case 'media.pause':
+	console.log(arrayData);
+	arrayData[1] += new Date() - arrayData[0];
+	console.log("TIME: " + arrayData[0]);
+	console.log("DURATION: " + arrayData[1]);
+	break;
+    case 'media.stop':
+	arrayData[1] += new Date() - arrayData[0];
+	console.log("TOTAL DURATION: " + arrayData[1]);
+	// TODO: PUT IN DATABASE
+
+	arrayData = [];
+	break;
+    case 'media.scrobbled':
+	break;
+    }
+
+    map[key] = arrayData;
+    
     handleDB(payload);
     
     console.log("Timestamp:\t" + new Date());
-    console.log("Event Type:\t" + payload.event);
+    console.log("Event Type:\t" + event);
     console.log("Account Title:\t" + payload.Account.title);
     console.log("Player Title:\t" + payload.Player.title);
     console.log("Media Title:\t" + payload.Metadata.title);
-//    console.log("Metadata:\t" + JSON.stringify(payload.Metadata));
 }
 
 function handleDB(payload) {
@@ -68,6 +92,9 @@ function handleDB(payload) {
     case 'movie':
 	insertMovie(metadata);
 	break;
+    case 'episode':
+	insertShow(metadata);
+	break;
     }
 }
 
@@ -78,44 +105,47 @@ function insertUser(account) {
 	", '" + account.title + "')" +
 	"ON DUPLICATE KEY UPDATE LastUpdate=CURRENT_TIMESTAMP";
     con.query(sql, (err, result) => {
-	if (err) {
-	    throw err;
-	}
-	console.log("INSERT RESULT: " + JSON.stringify(result));
+	if (err) throw err;
     });
 }
 
 function insertPlayer(player) {
     var sql = "INSERT INTO Players " +
 	"(ID, Title) " +
-	"VALUES('" + player.uuid +
-	"', '" + player.title + "') " +
-	"ON DUPLICATE KEY UPDATE Title='" + player.title + "'";
-    con.query(sql, (err, result) => {
+	"VALUES(?, ?)" +
+	"ON DUPLICATE KEY UPDATE Title=?, LastUpdate=CURRENT_TIMESTAMP";
+    con.query(sql, [player.uuid, player.title, player.title], (err, result) => {
 	if (err) {
 	    throw err;
 	}
-	console.log("INSERT RESULT: " + JSON.stringify(result));
     });
 }
 
 function insertMovie(metadata) {
     var sql = "INSERT INTO Movies " +
 	"(ID, Title, Duration, Year, Rating, ContentRating) " +
-	"VALUES('" + parseGUID(metadata.guid) +
-	"','" + metadata.title +
-	"', " + metadata.duration +
-	", " + metadata.year +
-	", " + metadata.rating +
-	", '" + metadata.contentRating + "') " +
+	"VALUES(?, ?, ?, ?, ?, ?)" +
+	"ON DUPLICATE KEY UPDATE " +
+	"Rating=?," +
+	"LastUpdate=CURRENT_TIMESTAMP";
+    con.query(sql, [parseGUID(metadata.guid), metadata.title, metadata.duration, metadata.year, metadata.rating, metadata.contentRating, metadata.rating], (err, result) => {
+	if (err) throw err;
+    });
+}
+
+function insertShow(metadata) {
+    var sql = "INSERT INTO TVShows " +
+	"(ID, Title, Year, Rating, ContentRating) " +
+	"VALUES('" + parseGUID(metadata.guid) + "'," +
+	"'" + metadata.grandparentTitle + "'," +
+	metadata.year + "," +
+	metadata.rating + "," +
+	"'" + metadata.contentRating + "')" +
 	"ON DUPLICATE KEY UPDATE " +
 	"Rating=" + metadata.rating + ", " +
 	"LastUpdate=CURRENT_TIMESTAMP";
     con.query(sql, (err, result) => {
-	if (err) {
-	    throw err;
-	}
-	console.log("INSERT RESULT: " + JSON.stringify(result));
+	if (err) throw err;
     });
 }
 
@@ -146,3 +176,4 @@ async function changeLights(payload) {
 	break;
     }
 }
+
