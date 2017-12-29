@@ -46,33 +46,34 @@ var map = {};
 function logEvent(payload) {
     var event = payload.event;
     var key = payload.Account.id + payload.Player.uuid;
-    var arrayData = map[key] || [];
+    var watchLogArray = map[key] || [];
     switch(event) {
     case 'media.play':
-	arrayData.push(new Date());
-	arrayData.push(0);
+	// Clear data just in case.
+	watchLogArray = [];
+	watchLogArray.push(new Date());
+	watchLogArray.push(0);
 	break;
     case 'media.resume':
-	arrayData[0] = new Date();
+	watchLogArray[0] = new Date();
 	break;
     case 'media.pause':
-	console.log(arrayData);
-	arrayData[1] += new Date() - arrayData[0];
-	console.log("TIME: " + arrayData[0]);
-	console.log("DURATION: " + arrayData[1]);
+	watchLogArray[1] += new Date() - watchLogArray[0];
 	break;
     case 'media.stop':
-	arrayData[1] += new Date() - arrayData[0];
-	console.log("TOTAL DURATION: " + arrayData[1]);
+	watchLogArray[1] += new Date() - watchLogArray[0];
 	// TODO: PUT IN DATABASE
 
-	arrayData = [];
+	watchLogArray = [];
 	break;
     case 'media.scrobbled':
+	watchLogArray.push(true);
+	watchLogArray.push(new Data());
 	break;
     }
 
-    map[key] = arrayData;
+    console.log(watchLogArray);
+    map[key] = watchLogArray;
     
     handleDB(payload);
     
@@ -101,10 +102,9 @@ function handleDB(payload) {
 function insertUser(account) {
     var sql = "INSERT INTO Users " +
 	"(ID, Title) " +
-	"VALUES(" + account.id +
-	", '" + account.title + "')" +
+	"VALUES(?, ?)" +
 	"ON DUPLICATE KEY UPDATE LastUpdate=CURRENT_TIMESTAMP";
-    con.query(sql, (err, result) => {
+    con.query(sql, [account.id, account.title], (err, result) => {
 	if (err) throw err;
     });
 }
@@ -136,15 +136,19 @@ function insertMovie(metadata) {
 function insertShow(metadata) {
     var sql = "INSERT INTO TVShows " +
 	"(ID, Title, Year, Rating, ContentRating) " +
-	"VALUES('" + parseGUID(metadata.guid) + "'," +
-	"'" + metadata.grandparentTitle + "'," +
-	metadata.year + "," +
-	metadata.rating + "," +
-	"'" + metadata.contentRating + "')" +
+	"VALUES(?, ?, ?, ?, ?) " +
 	"ON DUPLICATE KEY UPDATE " +
-	"Rating=" + metadata.rating + ", " +
+	"Rating=?, LastUpdate=CURRENT_TIMESTAMP";
+    con.query(sql, [parseGUID(metadata.guid), metadata.grandparentTitle, metadata.year, metadata.rating, metadata.contentRating, metadata.rating], (err, result) => {
+	if (err) throw err;
+    });
+    
+    sql = "INSERT INTO Episodes " +
+	"(Season, TSID, Title, Episode)" +
+	"VALUES(?, ?, ?, ?) " +
+	"ON DUPLICATE KEY UPDATE " +
 	"LastUpdate=CURRENT_TIMESTAMP";
-    con.query(sql, (err, result) => {
+    con.query(sql, [metadata.parentIndex, parseGUID(metadata.guid), metadata.title, metadata.index], (err, result) => {
 	if (err) throw err;
     });
 }
