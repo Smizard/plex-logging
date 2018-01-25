@@ -1,5 +1,4 @@
 const express = require('express')
-const { Client } = require('tplink-smarthome-api');
 const multer = require('multer');
 const db_config = require('./db_config.json');
 const upload = multer({ dest: '../temp/' });
