@@ -38,7 +38,7 @@ sudo apt install npm
 npm i
 ```
 With your favorite text editor (Emacs For Life!), create the file `config.json`
-Example config file:
+* Example config file:
 ```json
 {
     "host": "localhost",
