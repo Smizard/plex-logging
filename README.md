@@ -1,6 +1,6 @@
 # plex-logging
 
-> Logs Plex events using Plex Webhooks. (Also, it includes code for changing lights in smart devices but just comment that out).
+> Logs events from Plex Hooks into a MySQL database.
 
 [![NPM Version][npm-image]][npm-url]
 [![Downloads Stats][npm-downloads]][npm-url]
