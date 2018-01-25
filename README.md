@@ -8,6 +8,7 @@ cd plex-logging
 ```
 
 ## Database Setup.
+The following steps will install mysql and set up a root user account. This will require a password (so have one ready) and should be be prefeaced with updating `sudo apt update` and `sudo apt upgrade`.
 ```shell
 sudo apt-get install mysql-server
 mysql_secure_installation
