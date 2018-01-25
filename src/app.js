@@ -1,7 +1,6 @@
 const express = require('express')
 const { Client } = require('tplink-smarthome-api');
 const multer = require('multer');
-const config = require('./config.json');
 const db_config = require('./db_config.json');
 const upload = multer({ dest: '../temp/' });
 const fs = require('fs');
@@ -16,7 +15,6 @@ app.post('/', upload.single('thumb'), (req, res, next)=>{
     var payload = JSON.parse(req.body.payload);
 
     logEvent(payload);
-    changeLights(payload).catch((err)=>{console.log(err)});
 });
 app.listen(12035);
 console.log("Listening: 12035");
@@ -189,28 +187,5 @@ function insertShow(metadata) {
 function parseGUID(id) {
     var res = id.match(/(:\/\/)([0-9a-zA-Z]+)(\?|\/)/);
     return res[2];
-}
-
-async function changeLights(payload) {
-    if (!config.AprovedClients[payload.Player.uuid]) {
-	console.log("LIGHTS NOT APPROVED");
-	return;
-    }
-    
-    const client = new Client();
-    const device = await client.getDevice({host: config.Host});
-
-    switch (payload.event) {
-    case 'media.play':
-    case 'media.resume':
-	device.setPowerState(false);
-	console.log("Lights :: OFF");
-	break;
-    case 'media.stop':
-    case 'media.pause':
-	device.setPowerState(true);
-	console.log("Lights :: ON");
-	break;
-    }
 }
 
