@@ -1,6 +1,7 @@
 # plex-logging
 Logs Plex events using Plex Webhooks. (Also, it includes code for changing lights in smart devices but just comment that out).
 
+## Pull repo.
 ```shell
 git clone https://github.com/Smizard/plex-logging.git
 cd plex-logging
