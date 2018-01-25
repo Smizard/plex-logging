@@ -30,7 +30,7 @@ quit;
 service mysql start
 ```
 
-Now the database is all set up and running.
+Now the database is all set up and running. If you want to be more secure it might be a good idea to only grant `INSERT` and `UPDATE` privledges to the database (that is all the plex-logger uses)
 
 ## Server/Node Setup.
 ```shell
