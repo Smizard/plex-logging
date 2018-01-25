@@ -63,7 +63,7 @@ DB Connected
 
 you can start testing the hooks from plex. Go to your plex account home page. Account > Webhooks > Add Webhook and add `http://localhost:12035/` to your webhooks. Start a movie from that server on one of your plex clients and see if the terminal window logs out the right stuff. Try a command in the db like `select * from Movies;` to see if it was logged. Once I have confirmed that it is working it is better to use pm2. So now kill the npm process `ctrl+c` and start the pm2 monitor. `pm2 start /srcapp.js`
 
-## Same DB Queries.
+## Some Example DB Queries.
 Gets a list of all the movies watched, who watched them, for how long (total), how many times (times started or resumed), and on what date ordered by date watched (earliest date first)
 ```SQL
 select
@@ -82,3 +82,4 @@ TVShows.Title 'Show Title', Episodes.Episode 'Episode', Users.Title 'User Title'
 	where TVShowWatches.TSID = TVShows.ID and UID = Users.ID and EID = Episodes.Episode
 	group by TVShows.ID, Users.ID, Episodes.Episode;
 ```
+These are the two I use the most but I will add more as I perfect them.
