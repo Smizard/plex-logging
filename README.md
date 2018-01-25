@@ -22,7 +22,7 @@ Now your database should be setup with at least a root user and a root password.
 
 ```SQL
 CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
-GRAND ALL PRIVILEGES ON *.* TO 'username'@'localhost';
+GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost';
 FLUSH PRIVILEGES;
 quit;
 ```
