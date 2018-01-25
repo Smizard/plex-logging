@@ -14,15 +14,21 @@ mysql -u root -p
 ```
 ```SQL
 SOURCE <LOCATION_OF_SCHEMA.SQL>;    # I usually just drag and drop the file.
+FLUSH TABLES;
 ```
 Now your database should be setup with at least a root user and a root password. I usually setup a user specifically for the DB so my password for root aren't stored plain text (we will store it plain text in a minute)
 
 ```SQL
-GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost' IDENTIFIED BY 'password';
+CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
+GRAND ALL PRIVILEGES ON *.* TO 'username'@'localhost';
+FLUSH PRIVILEGES;
 quit;
 ```
+```shell
+service mysql start
+```
 
-Now the database is all set up.
+Now the database is all set up and running.
 
 ## Server/Node Setup.
 ```shell
@@ -36,7 +42,7 @@ Example config file:
     "host": "localhost",
     "user": "username",
     "password": "password",
-    "database": "plex-logger"
+    "database": "plex-logging"
 }
 ```
 
