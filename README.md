@@ -1,24 +1,18 @@
 # plex-logging
+
 > Logs Plex events using Plex Webhooks. (Also, it includes code for changing lights in smart devices but just comment that out).
 
 [![NPM Version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
 [![Downloads Stats][npm-downloads]][npm-url]
 
-[![GitHub version][img-version-badge]][badge-version]
-[![Join the chat at https://gitter.im/ryanoasis/vim-devicons][img-gitter-badge]][gitter]
-[![CodeClimate][img-code-climate-badge]][code-climate]
-[![Issue Count][img-code-climate-issues-badge]][code-climate-issues]
-[![Code of Conduct][img-coc-badge]][coc]
-[![PRs Welcome][img-prs-badge]][prs]
-
-
-## Pull repo.
+## Pull repo
 ```shell
 git clone https://github.com/Smizard/plex-logging.git
 cd plex-logging
 ```
 
-## Database Setup.
+## Database Setup
 The following steps will install mysql and set up a root user account. This will require a password (so have one ready) and should be be prefeaced with updating `sudo apt update` and `sudo apt upgrade`.
 ```shell
 sudo apt-get install mysql-server
@@ -43,7 +37,7 @@ service mysql start
 
 Now the database is all set up and running. If you want to be more secure it might be a good idea to only grant `INSERT` and `UPDATE` privledges to the database (that is all the plex-logger uses)
 
-## Server/Node Setup.
+## Server/Node Setup
 ```shell
 sudo apt install npm
 npm i
@@ -74,7 +68,7 @@ DB Connected
 
 you can start testing the hooks from plex. Go to your plex account home page. Account > Webhooks > Add Webhook and add `http://localhost:12035/` to your webhooks. Start a movie from that server on one of your plex clients and see if the terminal window logs out the right stuff. Try a command in the db like `select * from Movies;` to see if it was logged. Once I have confirmed that it is working it is better to use pm2. So now kill the npm process `ctrl+c` and start the pm2 monitor. `pm2 start /srcapp.js`
 
-## Some Example DB Queries.
+## Some Example DB Queries
 Gets a list of all the movies watched, who watched them, for how long (total), how many times (times started or resumed), and on what date ordered by date watched (earliest date first)
 ```SQL
 select
@@ -94,3 +88,8 @@ TVShows.Title 'Show Title', Episodes.Episode 'Episode', Users.Title 'User Title'
 	group by TVShows.ID, Users.ID, Episodes.Episode;
 ```
 These are the two I use the most but I will add more as I perfect them.
+
+<!-- Markdown link & img dfn's -->
+[npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/datadog-metrics
+[npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square
