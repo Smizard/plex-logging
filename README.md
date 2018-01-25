@@ -4,6 +4,14 @@
 [![NPM Version][npm-image]][npm-url]
 [![Downloads Stats][npm-downloads]][npm-url]
 
+[![GitHub version][img-version-badge]][badge-version]
+[![Join the chat at https://gitter.im/ryanoasis/vim-devicons][img-gitter-badge]][gitter]
+[![CodeClimate][img-code-climate-badge]][code-climate]
+[![Issue Count][img-code-climate-issues-badge]][code-climate-issues]
+[![Code of Conduct][img-coc-badge]][coc]
+[![PRs Welcome][img-prs-badge]][prs]
+
+
 ## Pull repo.
 ```shell
 git clone https://github.com/Smizard/plex-logging.git
