@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `plex-logging` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `plex-logging`;
 -- MySQL dump 10.13  Distrib 5.7.21, for Linux (x86_64)
 --
 -- Host: localhost    Database: plexlogtest
