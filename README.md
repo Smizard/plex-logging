@@ -55,7 +55,7 @@ you can start testing the hooks from plex. Go to your plex account home page. Ac
 
 ## Same DB Queries.
 Gets a list of all the movies watched, who watched them, for how long (total), how many times (times started or resumed), and on what date ordered by date watched (earliest date first)
-```shell
+```SQL
 select
 Movies.Title 'Movie Title', Users.Title 'User Title', sum(MovieWatches.Duration) / 3600000 'Total Time Watched(Hours)', count(Movies.ID and Users.ID) 'Watch Counts', max(MovieWatches.StartTime) 'Last Watched'
 	from MovieWatches, Movies, Users
@@ -65,7 +65,7 @@ Movies.Title 'Movie Title', Users.Title 'User Title', sum(MovieWatches.Duration)
 ```
 
 Same as above but for TV shows.
-```shell
+```SQL
 select
 TVShows.Title 'Show Title', Episodes.Episode 'Episode', Users.Title 'User Title', sum(TVShowWatches.Duration) / 3600000 'Total Time Watched(Hours)', count(TVShows.ID and Users.ID) 'Watch Counts'
 	from TVShowWatches, TVShows, Users, Episodes
