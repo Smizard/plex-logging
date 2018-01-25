@@ -3,8 +3,8 @@ Logs Plex events using Plex Webhooks. (Also, it includes code for changing light
 
 ```shell
 git clone https://github.com/Smizard/plex-logging.git
+cd plex-logging
 ```
-Navigate to the root folder, probably `cd plex-logging`.
 
 ## Database Setup.
 ```shell
