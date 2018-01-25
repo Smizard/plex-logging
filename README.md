@@ -11,11 +11,13 @@ Navigate to the root folder, probably `cd plex-logging`.
 sudo apt-get install mysql-server
 mysql_secure_installation
 mysql -u root -p
+```
+```SQL
 SOURCE <LOCATION_OF_SCHEMA.SQL>;    # I usually just drag and drop the file.
 ```
 Now your database should be setup with at least a root user and a root password. I usually setup a user specifically for the DB so my password for root aren't stored plain text (we will store it plain text in a minute)
 
-```shell
+```SQL
 GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost' IDENTIFIED BY 'password';
 quit;
 ```
